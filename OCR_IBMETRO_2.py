@@ -6,7 +6,16 @@ import cv2
 import easyocr
 import numpy as np
 from PIL import ImageEnhance,Image
+import ssl
+import urllib.request
 
+# Temporarily disable SSL verification for model download
+ssl._create_default_https_context = ssl._create_unverified_context
+
+reader = easyocr.Reader(['en'], gpu=True)
+
+# Re-enable SSL verification after model is downloaded
+ssl._create_default_https_context = ssl._create_default_https_context
 
 
 reader = easyocr.Reader(['en'],gpu=True)
@@ -118,6 +127,8 @@ class MyThread(QThread):
         
         return image
     # Brillo y contraste automatico
+
+
 def adjust_gamma(image, gamma=1.0):
     """
         Use this function to adjust illumination in an image.
@@ -129,6 +140,7 @@ def adjust_gamma(image, gamma=1.0):
     invGamma = 1.0 / gamma
     table = np.array([((i / 255.0) ** invGamma) * 255 for i in np.arange(0, 256)])
     return cv2.LUT(image.astype(np.uint8), table.astype(np.uint8))
+
 def automatic_brightness_and_contrast(image, clip_hist_percent=1):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     
